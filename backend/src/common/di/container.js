@@ -7,8 +7,13 @@ import {
 } from 'awilix';
 import { prisma } from '#db/prisma.js';
 import { UserRepository } from '#repository';
-import { AuthService, UsersService } from '#services';
-import { AuthController, UsersController, Controller } from '#controllers';
+import { AuthService, UsersService, SocialAuthService } from '#services';
+import {
+  AuthController,
+  SocialAuthController,
+  UsersController,
+  Controller,
+} from '#controllers';
 import { PasswordProvider, TokenProvider, CookieProvider } from '#providers';
 import { AuthMiddleware } from '#middlewares';
 
@@ -31,12 +36,18 @@ export const createContainer = () => {
     // 2. Services
     authService: asClass(AuthService, { lifetime: Lifetime.SINGLETON }),
     usersService: asClass(UsersService, { lifetime: Lifetime.SINGLETON }),
+    socialAuthService: asClass(SocialAuthService, {
+      lifetime: Lifetime.SINGLETON,
+    }),
 
     // 3. Middlewares
     authMiddleware: asClass(AuthMiddleware, { lifetime: Lifetime.SINGLETON }),
 
     // 4. Controllers
     authController: asClass(AuthController, { lifetime: Lifetime.SINGLETON }),
+    socialAuthController: asClass(SocialAuthController, {
+      lifetime: Lifetime.SINGLETON,
+    }),
     usersController: asClass(UsersController, { lifetime: Lifetime.SINGLETON }),
 
     // 5. Root Controller

@@ -9,18 +9,40 @@ const envSchema = z.object({
   JWT_ACCESS_SECRET: z.string().min(32),
   JWT_REFRESH_SECRET: z.string().min(32),
   CORS_ORIGINS: z.string().optional().default(''),
+  API_BASE_URL: z.string().optional().default(''),
+  CLIENT_BASE_URL: z.string().optional().default('http://localhost:3000'),
+  GOOGLE_CLIENT_ID: z.string().optional().default(''),
+  GOOGLE_CLIENT_SECRET: z.string().optional().default(''),
+  KAKAO_CLIENT_ID: z.string().optional().default(''),
+  KAKAO_CLIENT_SECRET: z.string().optional().default(''),
+  NAVER_CLIENT_ID: z.string().optional().default(''),
+  NAVER_CLIENT_SECRET: z.string().optional().default(''),
 });
 
 const parseEnvironment = () => {
   try {
-    return envSchema.parse({
+    const parsedEnv = envSchema.parse({
       NODE_ENV: process.env.NODE_ENV,
       PORT: process.env.PORT,
       DATABASE_URL: process.env.DATABASE_URL,
       JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,
       JWT_REFRESH_SECRET: process.env.JWT_REFRESH_SECRET,
       CORS_ORIGINS: process.env.CORS_ORIGINS,
+      API_BASE_URL: process.env.API_BASE_URL,
+      CLIENT_BASE_URL: process.env.CLIENT_BASE_URL,
+      GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+      GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
+      KAKAO_CLIENT_ID: process.env.KAKAO_CLIENT_ID,
+      KAKAO_CLIENT_SECRET: process.env.KAKAO_CLIENT_SECRET,
+      NAVER_CLIENT_ID: process.env.NAVER_CLIENT_ID,
+      NAVER_CLIENT_SECRET: process.env.NAVER_CLIENT_SECRET,
     });
+
+    return {
+      ...parsedEnv,
+      API_BASE_URL:
+        parsedEnv.API_BASE_URL || `http://localhost:${parsedEnv.PORT}`,
+    };
   } catch (error) {
     if (error instanceof z.ZodError) {
       const { fieldErrors } = flattenError(error);

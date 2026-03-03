@@ -22,6 +22,9 @@ export const ERROR_MESSAGE = {
   USER_NOT_FOUND_FROM_TOKEN: 'User not found from token',
   AUTH_FAILED: 'Authentication failed',
   INVALID_CREDENTIALS: 'Invalid email or password',
+  UNSUPPORTED_SOCIAL_PROVIDER: 'Unsupported social provider',
+  SOCIAL_AUTH_CODE_REQUIRED: 'Social authorization code is required',
+  SOCIAL_AUTH_FAILED: 'Social authentication failed',
   FORBIDDEN: 'Forbidden',
   UNAUTHORIZED: 'Unauthorized',
 

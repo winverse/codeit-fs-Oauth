@@ -6,16 +6,19 @@ export * from './users/index.js';
 
 export class Controller extends BaseController {
   #authController;
+  #socialAuthController;
   #usersController;
 
-  constructor({ authController, usersController }) {
+  constructor({ authController, socialAuthController, usersController }) {
     super();
     this.#authController = authController;
+    this.#socialAuthController = socialAuthController;
     this.#usersController = usersController;
   }
 
   routes() {
     this.router.use('/auth', this.#authController.routes());
+    this.router.use('/auth', this.#socialAuthController.routes());
     this.router.use('/users', this.#usersController.routes());
 
     this.router.get('/ping', (req, res) => this.ping(req, res));

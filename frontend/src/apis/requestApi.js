@@ -40,12 +40,14 @@ export async function requestApi(path, options = {}) {
     headers,
     cache = 'no-store',
     next,
+    credentials = 'same-origin',
   } = options;
   const requestBody = body ? JSON.stringify(body) : undefined;
 
   const response = await fetch(buildRequestUrl(path, query), {
     method,
     cache,
+    credentials,
     headers: {
       Accept: 'application/json',
       ...(requestBody ? { 'Content-Type': 'application/json' } : {}),
