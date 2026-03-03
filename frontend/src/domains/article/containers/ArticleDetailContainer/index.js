@@ -1,0 +1,1 @@
+export { ArticleDetailContainer } from './ArticleDetailContainer';

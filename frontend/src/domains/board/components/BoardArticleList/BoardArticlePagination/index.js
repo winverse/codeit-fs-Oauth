@@ -1,0 +1,1 @@
+export { BoardArticlePagination } from './BoardArticlePagination';

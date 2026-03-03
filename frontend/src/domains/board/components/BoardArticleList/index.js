@@ -1,0 +1,1 @@
+export { BoardArticleList } from './BoardArticleList';
