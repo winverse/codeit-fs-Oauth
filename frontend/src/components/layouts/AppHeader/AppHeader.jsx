@@ -1,5 +1,6 @@
 'use client';
 
+import clsx from 'clsx';
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -47,12 +48,10 @@ export function AppHeader() {
   }, [isMenuOpen]);
 
   const displayName = user?.name?.trim() || user?.email;
-  const chevronClassName = [
+  const chevronClassName = clsx(
     styles.menuChevron,
-    isMenuOpen ? styles.menuChevronOpen : '',
-  ]
-    .filter(Boolean)
-    .join(' ');
+    isMenuOpen && styles.menuChevronOpen,
+  );
 
   return (
     <header className={styles.header}>
