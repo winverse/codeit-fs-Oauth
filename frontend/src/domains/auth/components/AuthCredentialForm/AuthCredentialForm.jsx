@@ -27,6 +27,7 @@ export function AuthCredentialForm({
           onChange={(event) => onNameChange(event.target.value)}
           placeholder="이름을 입력해 주세요"
           onBlur={onFieldBlur}
+          autoComplete="name"
         />
       ) : null}
 
@@ -38,6 +39,7 @@ export function AuthCredentialForm({
         onChange={(event) => onEmailChange(event.target.value)}
         placeholder="example@email.com"
         onBlur={onFieldBlur}
+        autoComplete="email"
       />
 
       <FormField
@@ -48,6 +50,7 @@ export function AuthCredentialForm({
         onChange={(event) => onPasswordChange(event.target.value)}
         placeholder="비밀번호를 입력해 주세요"
         onBlur={onFieldBlur}
+        autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
       />
 
       <p className={styles.message}>{message}</p>

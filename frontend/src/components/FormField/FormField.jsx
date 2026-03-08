@@ -10,6 +10,7 @@ export function FormField({
   errorMessage,
   onBlur,
   onKeyDown,
+  autoComplete,
   type = 'text',
 }) {
   return (
@@ -27,6 +28,7 @@ export function FormField({
           onChange={onChange}
           onBlur={onBlur}
           placeholder={placeholder}
+          autoComplete={autoComplete}
         />
       ) : (
         <input
@@ -37,6 +39,7 @@ export function FormField({
           onBlur={onBlur}
           onKeyDown={onKeyDown}
           placeholder={placeholder}
+          autoComplete={autoComplete}
           type={type}
         />
       )}
