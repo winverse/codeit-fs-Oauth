@@ -1,5 +1,5 @@
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? 'https://panda-market-api.vercel.app';
+  process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:5001';
 
 const isQueryValueDefined = (queryValue) =>
   queryValue !== undefined && queryValue !== null && queryValue !== '';

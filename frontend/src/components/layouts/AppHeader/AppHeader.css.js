@@ -44,34 +44,6 @@ export const logoLink = style({
   alignItems: 'center',
 });
 
-export const nav = style({
-  display: 'flex',
-  alignItems: 'center',
-  gap: vars.space.md,
-  fontSize: '16px',
-  fontWeight: 700,
-  color: vars.color.gray600,
-  '@media': {
-    [media.tablet]: {
-      gap: '36px',
-      fontSize: '18px',
-    },
-  },
-});
-
-export const navLink = style({
-  transition: 'color 150ms ease',
-  selectors: {
-    '&:hover': {
-      color: vars.color.blue,
-    },
-  },
-});
-
-export const navLinkActive = style({
-  color: vars.color.blue,
-});
-
 export const loginLink = style({
   display: 'inline-flex',
   alignItems: 'center',

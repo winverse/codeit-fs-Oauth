@@ -40,15 +40,3 @@ export const primaryLink = style({
   fontWeight: 700,
   padding: '0 20px',
 });
-
-export const secondaryLink = style({
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  minHeight: '46px',
-  borderRadius: vars.radius.pill,
-  border: `1px solid ${vars.color.gray200}`,
-  color: vars.color.gray700,
-  fontWeight: 700,
-  padding: '0 20px',
-});

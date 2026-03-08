@@ -1,4 +1,3 @@
-import { AppFooter } from '@/components/layouts/AppFooter';
 import { AppHeader } from '@/components/layouts/AppHeader';
 import * as styles from './AppShell.css';
 
@@ -7,7 +6,6 @@ export function AppShell({ children }) {
     <div className={styles.shell}>
       <AppHeader />
       <main className={styles.main}>{children}</main>
-      <AppFooter />
     </div>
   );
 }

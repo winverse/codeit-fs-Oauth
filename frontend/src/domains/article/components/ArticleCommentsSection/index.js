@@ -1,1 +1,0 @@
-export { ArticleCommentsSection } from './ArticleCommentsSection';

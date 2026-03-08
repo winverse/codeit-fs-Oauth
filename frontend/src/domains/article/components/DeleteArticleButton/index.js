@@ -1,1 +1,0 @@
-export { DeleteArticleButton } from './DeleteArticleButton';

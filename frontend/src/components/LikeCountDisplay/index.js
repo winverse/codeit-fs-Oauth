@@ -1,1 +1,0 @@
-export { LikeCountDisplay } from './LikeCountDisplay';
