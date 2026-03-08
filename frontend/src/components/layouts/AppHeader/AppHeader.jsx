@@ -1,15 +1,11 @@
 'use client';
 
-import clsx from 'clsx';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { APP_LOGO_SIZE } from '@/constants/uiDimensions';
 import * as styles from './AppHeader.css';
 
 export function AppHeader() {
-  const pathname = usePathname();
-
   return (
     <header className={styles.header}>
       <div className={styles.inner}>
@@ -23,18 +19,6 @@ export function AppHeader() {
               priority={true}
             />
           </Link>
-
-          <nav className={styles.nav}>
-            <Link
-              href="/board"
-              className={clsx(
-                styles.navLink,
-                pathname?.startsWith('/board') && styles.navLinkActive,
-              )}
-            >
-              자유게시판
-            </Link>
-          </nav>
         </div>
 
         <Link href="/login" className={styles.loginLink}>

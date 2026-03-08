@@ -1,1 +1,0 @@
-export { BoardArticleList } from './BoardArticleList';

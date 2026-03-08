@@ -1,1 +1,0 @@
-export { BoardBestArticleCard } from './BoardBestArticleCard';

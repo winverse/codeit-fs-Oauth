@@ -21,8 +21,8 @@ export function ArticleDetailContainer({
         initialNextCursor={initialNextCursor}
       />
 
-      <Link href="/board" className={styles.backLink}>
-        목록으로 돌아가기
+      <Link href="/" className={styles.backLink}>
+        홈으로 돌아가기
         <Image
           src="/images/icons/ic_back.svg"
           alt="뒤로"

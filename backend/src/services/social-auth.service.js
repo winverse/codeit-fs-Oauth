@@ -1,39 +1,52 @@
-import crypto from 'node:crypto';
 import { config } from '#config';
 import { ERROR_MESSAGE } from '#constants';
 import { BadRequestException, UnauthorizedException } from '#exceptions';
 
 export class SocialAuthService {
   #userRepository;
-  #passwordProvider;
   #tokenProvider;
 
-  constructor({ userRepository, passwordProvider, tokenProvider }) {
+  constructor({ userRepository, tokenProvider }) {
     this.#userRepository = userRepository;
-    this.#passwordProvider = passwordProvider;
     this.#tokenProvider = tokenProvider;
   }
 
   async loginOrSignUp({ provider, code, state }) {
     const profile = await this.#getSocialProfile(provider, code, state);
-    const email = this.#resolveEmail({ provider, profile });
-
-    let user = await this.#userRepository.findByEmail(email);
-    if (!user) {
-      const randomPassword = crypto.randomUUID();
-      const hashedPassword = await this.#passwordProvider.hash(randomPassword);
-
-      user = await this.#userRepository.create({
-        email,
-        password: hashedPassword,
-        name: profile.name,
-      });
-    } else if (!user.name && profile.name) {
-      user = await this.#userRepository.update(user.id, { name: profile.name });
-    }
-
+    const user = await this.#resolveUser({ provider, profile });
     const tokens = this.#tokenProvider.generateTokens(user);
     return { user, tokens };
+  }
+
+  async #resolveUser({ provider, profile }) {
+    const socialUser = await this.#userRepository.findBySocialAccount(provider, profile.id);
+
+    // 1. 소셜 계정으로 찾은 경우 — 이름 없으면 업데이트
+    if (socialUser) {
+      return !socialUser.name && profile.name
+        ? this.#userRepository.update(socialUser.id, { name: profile.name })
+        : socialUser;
+    }
+
+    const email = this.#resolveEmail({ provider, profile });
+    const existingUser = await this.#userRepository.findByEmail(email);
+
+    // 2. 이메일 일치 유저 없으면 새 유저 생성
+    if (!existingUser) {
+      return this.#userRepository.createWithSocialAccount({
+        email,
+        name: profile.name,
+        provider,
+        providerId: profile.id,
+      });
+    }
+
+    // 3. 이메일 일치 기존 유저에 소셜 계정 연결
+    await this.#userRepository.connectSocialAccount(existingUser.id, {
+      provider,
+      providerId: profile.id,
+    });
+    return existingUser;
   }
 
   async #getSocialProfile(provider, code, state) {
@@ -45,7 +58,9 @@ export class SocialAuthService {
       case 'naver':
         return this.#getNaverProfile(code, state);
       default:
-        throw new BadRequestException(ERROR_MESSAGE.UNSUPPORTED_SOCIAL_PROVIDER);
+        throw new BadRequestException(
+          ERROR_MESSAGE.UNSUPPORTED_SOCIAL_PROVIDER,
+        );
     }
   }
 
@@ -210,7 +225,9 @@ export class SocialAuthService {
         payload?.message ??
         defaultErrorMessage;
 
-      throw new UnauthorizedException(message ?? ERROR_MESSAGE.SOCIAL_AUTH_FAILED);
+      throw new UnauthorizedException(
+        message ?? ERROR_MESSAGE.SOCIAL_AUTH_FAILED,
+      );
     }
 
     return payload;

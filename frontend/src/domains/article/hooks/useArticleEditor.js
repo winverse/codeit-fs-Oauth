@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { createArticle, fetchArticleDetail, updateArticle } from '@/apis';
 import { toErrorMessage } from '@/domains/article/utils/articleMessages';
+import { queryKeys } from '@/queries/queryKeys';
 import { parseArticleId } from '@/utils';
 
 export function useArticleEditor(articleId) {
@@ -13,88 +15,97 @@ export function useArticleEditor(articleId) {
 
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [isTitleDirty, setIsTitleDirty] = useState(false);
+  const [isContentDirty, setIsContentDirty] = useState(false);
+  const [submissionErrorMessage, setSubmissionErrorMessage] = useState('');
 
-  useEffect(() => {
-    if (!isEditMode) {
-      return;
-    }
+  const articleDetailQuery = useQuery({
+    queryKey: queryKeys.articles.detail(parsedArticleId),
+    queryFn: () => fetchArticleDetail(parsedArticleId),
+    enabled: isEditMode,
+  });
 
-    let shouldIgnore = false;
-
-    async function loadArticle() {
-      setIsLoading(true);
-      setErrorMessage('');
-
-      try {
-        const article = await fetchArticleDetail(parsedArticleId);
-        if (shouldIgnore) {
-          return;
-        }
-
-        setTitle(article?.title ?? '');
-        setContent(article?.content ?? '');
-      } catch (error) {
-        if (!shouldIgnore) {
-          setErrorMessage(
-            toErrorMessage(error, '게시글 정보를 불러오지 못했어요.'),
-          );
-        }
-      } finally {
-        if (!shouldIgnore) {
-          setIsLoading(false);
-        }
+  const saveArticleMutation = useMutation({
+    mutationFn: async ({ title, content }) => {
+      if (isEditMode) {
+        return updateArticle({
+          articleId: parsedArticleId,
+          title,
+          content,
+        });
       }
-    }
 
-    loadArticle();
+      return createArticle({
+        title,
+        content,
+      });
+    },
+  });
 
-    return () => {
-      shouldIgnore = true;
-    };
-  }, [isEditMode, parsedArticleId]);
+  const resolvedTitle =
+    isEditMode && !isTitleDirty
+      ? (articleDetailQuery.data?.title ?? '')
+      : title;
+  const resolvedContent =
+    isEditMode && !isContentDirty
+      ? (articleDetailQuery.data?.content ?? '')
+      : content;
+
+  const updateTitle = (nextTitle) => {
+    setIsTitleDirty(true);
+    setTitle(nextTitle);
+  };
+
+  const updateContent = (nextContent) => {
+    setIsContentDirty(true);
+    setContent(nextContent);
+  };
 
   const submit = async () => {
-    if (!title.trim() || !content.trim() || isSubmitting) {
+    if (
+      !resolvedTitle.trim() ||
+      !resolvedContent.trim() ||
+      saveArticleMutation.isPending
+    ) {
       return;
     }
 
-    setIsSubmitting(true);
-    setErrorMessage('');
+    setSubmissionErrorMessage('');
 
     try {
-      if (isEditMode) {
-        const updated = await updateArticle({
-          articleId: parsedArticleId,
-          title: title.trim(),
-          content: content.trim(),
-        });
-        router.push(`/board/${updated.id ?? parsedArticleId}`);
-      } else {
-        const created = await createArticle({
-          title: title.trim(),
-          content: content.trim(),
-        });
-        router.push(`/board/${created.id}`);
-      }
+      const savedArticle = await saveArticleMutation.mutateAsync({
+        title: resolvedTitle.trim(),
+        content: resolvedContent.trim(),
+      });
+
+      const nextArticleId = savedArticle.id ?? parsedArticleId;
+      router.push(nextArticleId ? `/addArticle?id=${nextArticleId}` : '/');
       router.refresh();
     } catch (error) {
-      setErrorMessage(toErrorMessage(error, '게시글을 저장하지 못했어요.'));
-    } finally {
-      setIsSubmitting(false);
+      setSubmissionErrorMessage(
+        toErrorMessage(error, '게시글을 저장하지 못했어요.'),
+      );
     }
   };
 
+  const queryErrorMessage =
+    isEditMode && articleDetailQuery.error
+      ? toErrorMessage(
+          articleDetailQuery.error,
+          '게시글 정보를 불러오지 못했어요.',
+        )
+      : '';
+
+  const errorMessage = submissionErrorMessage || queryErrorMessage;
+
   return {
     isEditMode,
-    title,
-    setTitle,
-    content,
-    setContent,
-    isLoading,
-    isSubmitting,
+    title: resolvedTitle,
+    setTitle: updateTitle,
+    content: resolvedContent,
+    setContent: updateContent,
+    isLoading: isEditMode && articleDetailQuery.isLoading,
+    isSubmitting: saveArticleMutation.isPending,
     errorMessage,
     submit,
   };

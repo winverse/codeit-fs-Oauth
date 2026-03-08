@@ -1,4 +1,5 @@
 import { AppShell } from '@/components/layouts/AppShell';
+import { ReactQueryProvider } from '@/providers/ReactQueryProvider';
 import '@/styles/global.css.js';
 
 export const metadata = {
@@ -10,7 +11,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="ko">
       <body>
-        <AppShell>{children}</AppShell>
+        <ReactQueryProvider>
+          <AppShell>{children}</AppShell>
+        </ReactQueryProvider>
       </body>
     </html>
   );

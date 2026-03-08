@@ -16,7 +16,7 @@ export function DeleteArticleButton({ articleId, className = '' }) {
 
     try {
       await deleteArticle(articleId);
-      router.push('/board');
+      router.push('/');
       router.refresh();
     } catch (error) {
       const message =

@@ -1,1 +1,0 @@
-export { BoardBestSection } from './BoardBestSection';
