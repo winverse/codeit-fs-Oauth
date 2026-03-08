@@ -11,6 +11,20 @@ export const root = style({
   gap: vars.space.lg,
 });
 
+export const statusBadge = style({
+  margin: 0,
+  minHeight: '32px',
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: '0 14px',
+  borderRadius: vars.radius.pill,
+  backgroundColor: vars.color.gray100,
+  color: vars.color.gray700,
+  fontSize: '14px',
+  fontWeight: 700,
+});
+
 export const title = style({
   color: vars.color.gray900,
   fontSize: '40px',
@@ -29,6 +43,37 @@ export const linkRow = style({
   gap: vars.space.sm,
 });
 
+export const summaryCard = style({
+  width: '100%',
+  maxWidth: '520px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: vars.space.sm,
+  padding: vars.space.md,
+  borderRadius: vars.radius.lg,
+  border: `1px solid ${vars.color.gray200}`,
+  backgroundColor: vars.color.gray50,
+});
+
+export const summaryRow = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '4px',
+});
+
+export const summaryLabel = style({
+  color: vars.color.gray500,
+  fontSize: '13px',
+  fontWeight: 700,
+});
+
+export const summaryValue = style({
+  color: vars.color.gray900,
+  fontSize: '16px',
+  fontWeight: 700,
+  wordBreak: 'break-all',
+});
+
 export const primaryLink = style({
   display: 'inline-flex',
   alignItems: 'center',
@@ -40,3 +85,17 @@ export const primaryLink = style({
   fontWeight: 700,
   padding: '0 20px',
 });
+
+export const primaryButton = style([
+  primaryLink,
+  {
+    border: 0,
+    cursor: 'pointer',
+    selectors: {
+      '&:disabled': {
+        backgroundColor: vars.color.gray400,
+        cursor: 'wait',
+      },
+    },
+  },
+]);

@@ -19,7 +19,10 @@ export class SocialAuthService {
   }
 
   async #resolveUser({ provider, profile }) {
-    const socialUser = await this.#userRepository.findBySocialAccount(provider, profile.id);
+    const socialUser = await this.#userRepository.findBySocialAccount(
+      provider,
+      profile.id,
+    );
 
     // 1. 소셜 계정으로 찾은 경우 — 이름 없으면 업데이트
     if (socialUser) {
@@ -135,6 +138,8 @@ export class SocialAuthService {
       },
       'Kakao 토큰 요청에 실패했습니다.',
     );
+
+    console.log('tokenResponse', tokenResponse);
 
     const profileResponse = await this.#requestJson(
       'https://kapi.kakao.com/v2/user/me',

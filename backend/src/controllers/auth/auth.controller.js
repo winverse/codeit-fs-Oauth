@@ -1,6 +1,6 @@
 import { BaseController } from '#controllers/base.controller.js';
 import { HTTP_STATUS } from '#constants';
-import { validate, needsLogin } from '#middlewares';
+import { validate } from '#middlewares';
 import { signUpSchema, loginSchema } from './dto/auth.dto.js';
 
 export class AuthController extends BaseController {
@@ -21,7 +21,7 @@ export class AuthController extends BaseController {
       this.login(req, res),
     );
     this.router.post('/logout', (req, res) => this.logout(req, res));
-    this.router.get('/me', needsLogin, (req, res) => this.me(req, res));
+    this.router.get('/me', (req, res) => this.me(req, res));
     return this.router;
   }
 
@@ -54,6 +54,11 @@ export class AuthController extends BaseController {
   }
 
   async me(req, res) {
+    if (!req.user) {
+      res.status(HTTP_STATUS.OK).json(null);
+      return;
+    }
+
     const user = await this.#authService.getMe(req.user.id);
     res.status(HTTP_STATUS.OK).json(user);
   }

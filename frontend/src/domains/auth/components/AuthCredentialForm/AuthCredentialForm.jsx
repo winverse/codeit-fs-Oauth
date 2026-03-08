@@ -1,7 +1,7 @@
 'use client';
 
 import { FormField } from '@/components/FormField';
-import * as styles from '@/domains/auth/containers/AuthPageContainer/AuthPageContainer.css';
+import * as styles from './AuthCredentialForm.css';
 
 export function AuthCredentialForm({
   mode,

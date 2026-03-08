@@ -30,49 +30,6 @@ export const subtitle = style({
   lineHeight: 1.5,
 });
 
-export const modeRow = style({
-  display: 'flex',
-  borderRadius: vars.radius.pill,
-  padding: '4px',
-  gap: '4px',
-  backgroundColor: vars.color.gray100,
-});
-
-export const modeButton = style({
-  flex: 1,
-  minHeight: '40px',
-  borderRadius: vars.radius.pill,
-  fontWeight: 700,
-  color: vars.color.gray700,
-});
-
-export const modeButtonActive = style({
-  backgroundColor: vars.color.white,
-  color: vars.color.gray900,
-  boxShadow: '0 1px 2px rgba(17, 24, 39, 0.12)',
-});
-
-export const form = style({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: vars.space.sm,
-});
-
-export const submitButton = style({
-  marginTop: '4px',
-  minHeight: '48px',
-  borderRadius: vars.radius.md,
-  backgroundColor: vars.color.blue,
-  color: vars.color.white,
-  fontWeight: 700,
-  selectors: {
-    '&:disabled': {
-      opacity: 0.6,
-      cursor: 'not-allowed',
-    },
-  },
-});
-
 export const divider = style({
   position: 'relative',
   textAlign: 'center',
@@ -95,25 +52,4 @@ export const dividerText = style({
   position: 'relative',
   backgroundColor: vars.color.white,
   padding: '0 10px',
-});
-
-export const socialGrid = style({
-  display: 'grid',
-  gridTemplateColumns: '1fr',
-  gap: vars.space.xs,
-});
-
-export const socialButton = style({
-  minHeight: '46px',
-  borderRadius: vars.radius.md,
-  border: `1px solid ${vars.color.gray200}`,
-  color: vars.color.gray800,
-  fontWeight: 700,
-});
-
-export const message = style({
-  minHeight: '20px',
-  fontSize: '13px',
-  lineHeight: 1.4,
-  color: vars.color.red,
 });

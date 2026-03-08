@@ -1,7 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
-import * as styles from '@/domains/auth/containers/AuthPageContainer/AuthPageContainer.css';
+import * as styles from './AuthModeSwitch.css';
 
 export function AuthModeSwitch({ mode, onSelectMode }) {
   return (

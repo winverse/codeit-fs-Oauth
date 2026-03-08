@@ -1,6 +1,6 @@
 'use client';
 
-import * as styles from '@/domains/auth/containers/AuthPageContainer/AuthPageContainer.css';
+import * as styles from './SocialLoginButtons.css';
 
 export function SocialLoginButtons({ providers, onSocialLogin }) {
   return (

@@ -1,15 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { login, signUp } from '@/apis/authApi';
+import { AUTH_ME_QUERY_KEY } from './useAuthSession';
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:5001';
 
 export function useAuthPageModel() {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [mode, setMode] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -56,7 +58,13 @@ export function useAuthPageModel() {
     }
 
     try {
-      await authMutation.mutateAsync({ email, password, name, mode });
+      const user = await authMutation.mutateAsync({
+        email,
+        password,
+        name,
+        mode,
+      });
+      queryClient.setQueryData(AUTH_ME_QUERY_KEY, user);
       router.push('/');
       router.refresh();
     } catch (error) {

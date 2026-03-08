@@ -20,6 +20,13 @@ export function login(payload) {
   });
 }
 
+export function logout() {
+  return requestApi('/api/auth/logout', {
+    method: 'POST',
+    ...withAuthCookies,
+  });
+}
+
 export function getMe() {
   return requestApi('/api/auth/me', {
     ...withAuthCookies,

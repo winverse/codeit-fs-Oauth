@@ -60,3 +60,98 @@ export const loginLink = style({
     },
   },
 });
+
+export const sessionSkeleton = style({
+  width: '112px',
+  height: '42px',
+  borderRadius: vars.radius.pill,
+  backgroundColor: vars.color.gray100,
+});
+
+export const userMenu = style({
+  position: 'relative',
+});
+
+export const userButton = style({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: vars.space.xs,
+  maxWidth: '220px',
+  height: '42px',
+  paddingLeft: '14px',
+  paddingRight: '14px',
+  borderRadius: vars.radius.pill,
+  border: `1px solid ${vars.color.gray200}`,
+  backgroundColor: vars.color.white,
+  color: vars.color.gray900,
+  fontWeight: 700,
+  selectors: {
+    '&:hover': {
+      backgroundColor: vars.color.gray50,
+    },
+    '&:focus-visible': {
+      outline: `2px solid ${vars.color.blueFocus}`,
+      outlineOffset: '2px',
+    },
+  },
+});
+
+export const userName = style({
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+});
+
+export const menuChevron = style({
+  color: vars.color.gray500,
+  transition: 'transform 0.16s ease',
+});
+
+export const menuChevronOpen = style({
+  transform: 'rotate(180deg)',
+});
+
+export const menuPopover = style({
+  position: 'absolute',
+  top: 'calc(100% + 10px)',
+  right: 0,
+  minWidth: '180px',
+  padding: vars.space.sm,
+  borderRadius: vars.radius.md,
+  border: `1px solid ${vars.color.gray200}`,
+  backgroundColor: vars.color.white,
+  boxShadow: '0 18px 40px rgba(17, 24, 39, 0.12)',
+});
+
+export const menuStatus = style({
+  margin: 0,
+  padding: `0 ${vars.space.xs} ${vars.space.xs}`,
+  color: vars.color.gray500,
+  fontSize: '13px',
+  fontWeight: 600,
+});
+
+export const menuItemButton = style({
+  width: '100%',
+  height: '40px',
+  borderRadius: vars.radius.sm,
+  backgroundColor: vars.color.white,
+  color: vars.color.gray900,
+  fontWeight: 600,
+  textAlign: 'left',
+  paddingLeft: vars.space.sm,
+  paddingRight: vars.space.sm,
+  selectors: {
+    '&:hover:not(:disabled)': {
+      backgroundColor: vars.color.gray50,
+    },
+    '&:disabled': {
+      color: vars.color.gray400,
+      cursor: 'wait',
+    },
+    '&:focus-visible': {
+      outline: `2px solid ${vars.color.blueFocus}`,
+      outlineOffset: '2px',
+    },
+  },
+});
