@@ -8,7 +8,22 @@ import { useAuthPageModel } from '@/domains/auth/hooks/useAuthPageModel';
 import * as styles from './AuthPageContainer.css';
 
 export function AuthPageContainer() {
-  const authPageModel = useAuthPageModel();
+  const {
+    mode,
+    name,
+    email,
+    password,
+    message,
+    submitLabel,
+    isPending,
+    setName,
+    setEmail,
+    setPassword,
+    clearMessage,
+    selectMode,
+    submit,
+    moveToSocialLogin,
+  } = useAuthPageModel();
 
   return (
     <section className={styles.root}>
@@ -19,23 +34,23 @@ export function AuthPageContainer() {
         </p>
 
         <AuthModeSwitch
-          mode={authPageModel.mode}
-          onSelectMode={authPageModel.selectMode}
+          mode={mode}
+          onSelectMode={selectMode}
         />
 
         <AuthCredentialForm
-          mode={authPageModel.mode}
-          name={authPageModel.name}
-          email={authPageModel.email}
-          password={authPageModel.password}
-          message={authPageModel.message}
-          isPending={authPageModel.isPending}
-          submitLabel={authPageModel.submitLabel}
-          onNameChange={authPageModel.setName}
-          onEmailChange={authPageModel.setEmail}
-          onPasswordChange={authPageModel.setPassword}
-          onFieldBlur={authPageModel.clearMessage}
-          onSubmit={authPageModel.submit}
+          mode={mode}
+          name={name}
+          email={email}
+          password={password}
+          message={message}
+          isPending={isPending}
+          submitLabel={submitLabel}
+          onNameChange={setName}
+          onEmailChange={setEmail}
+          onPasswordChange={setPassword}
+          onFieldBlur={clearMessage}
+          onSubmit={submit}
         />
 
         <div className={styles.divider}>
@@ -44,7 +59,7 @@ export function AuthPageContainer() {
 
         <SocialLoginButtons
           providers={SOCIAL_PROVIDERS}
-          onSocialLogin={authPageModel.moveToSocialLogin}
+          onSocialLogin={moveToSocialLogin}
         />
       </div>
     </section>
