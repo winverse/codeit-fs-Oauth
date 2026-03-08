@@ -1,11 +1,6 @@
 import { z } from 'zod';
 import { createDocument } from 'zod-openapi';
 import { signUpSchema, loginSchema } from '#controllers/auth/dto/auth.dto.js';
-import {
-  createUserSchema,
-  idParamSchema,
-  updateUserSchema,
-} from '#controllers/users/dto/users.dto.js';
 
 const userResponseSchema = z
   .object({
@@ -16,13 +11,8 @@ const userResponseSchema = z
   })
   .meta({
     id: 'UserResponse',
-    description: '사용자 공개 정보 응답',
+    description: '인증 성공 시 반환되는 사용자 공개 정보',
   });
-
-const usersResponseSchema = z.array(userResponseSchema).meta({
-  id: 'UsersResponse',
-  description: '사용자 목록 응답',
-});
 
 const pingResponseSchema = z
   .object({
@@ -30,7 +20,7 @@ const pingResponseSchema = z
   })
   .meta({
     id: 'PingResponse',
-    description: '서버 헬스 체크 응답',
+    description: '서버 상태 확인 응답',
   });
 
 const errorResponseSchema = z
@@ -44,17 +34,12 @@ const errorResponseSchema = z
     description: '공통 에러 응답',
   });
 
-const userIdPathSchema = idParamSchema.meta({
-  id: 'UserIdPath',
-});
-
 export const openApiDocument = createDocument({
   openapi: '3.1.0',
   info: {
-    title: 'DI Express API',
+    title: 'OAuth Social Login API',
     version: '1.0.0',
-    description:
-      'feature-based에서 layered architecture로 마이그레이션한 인증/사용자 API 문서',
+    description: '이메일 인증과 소셜 로그인 흐름만 남긴 인증 API 문서',
   },
   tags: [
     {
@@ -63,11 +48,7 @@ export const openApiDocument = createDocument({
     },
     {
       name: 'Auth',
-      description: '인증 관련 API',
-    },
-    {
-      name: 'Users',
-      description: '사용자 관리 API',
+      description: '로그인, 회원가입, 세션 확인',
     },
   ],
   components: {
@@ -76,7 +57,7 @@ export const openApiDocument = createDocument({
         type: 'apiKey',
         in: 'cookie',
         name: 'accessToken',
-        description: '로그인 시 발급되는 Access Token 쿠키',
+        description: '로그인 성공 시 설정되는 Access Token 쿠키',
       },
     },
   },
@@ -100,7 +81,7 @@ export const openApiDocument = createDocument({
     '/api/auth/signup': {
       post: {
         tags: ['Auth'],
-        summary: '회원가입',
+        summary: '이메일 회원가입',
         requestBody: {
           required: true,
           content: {
@@ -140,7 +121,7 @@ export const openApiDocument = createDocument({
     '/api/auth/login': {
       post: {
         tags: ['Auth'],
-        summary: '로그인',
+        summary: '이메일 로그인',
         requestBody: {
           required: true,
           content: {
@@ -191,89 +172,8 @@ export const openApiDocument = createDocument({
     '/api/auth/me': {
       get: {
         tags: ['Auth'],
-        summary: '내 정보 조회',
+        summary: '현재 로그인 사용자 조회',
         security: [{ accessTokenCookie: [] }],
-        responses: {
-          200: {
-            description: '내 정보 조회 성공',
-            content: {
-              'application/json': {
-                schema: userResponseSchema,
-              },
-            },
-          },
-          401: {
-            description: '로그인 필요',
-            content: {
-              'application/json': {
-                schema: errorResponseSchema,
-              },
-            },
-          },
-        },
-      },
-    },
-    '/api/users': {
-      get: {
-        tags: ['Users'],
-        summary: '전체 사용자 조회',
-        responses: {
-          200: {
-            description: '사용자 목록 조회 성공',
-            content: {
-              'application/json': {
-                schema: usersResponseSchema,
-              },
-            },
-          },
-        },
-      },
-      post: {
-        tags: ['Users'],
-        summary: '사용자 생성',
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: createUserSchema,
-            },
-          },
-        },
-        responses: {
-          201: {
-            description: '사용자 생성 성공',
-            content: {
-              'application/json': {
-                schema: userResponseSchema,
-              },
-            },
-          },
-          400: {
-            description: '입력값 검증 실패',
-            content: {
-              'application/json': {
-                schema: errorResponseSchema,
-              },
-            },
-          },
-          409: {
-            description: '이메일 중복',
-            content: {
-              'application/json': {
-                schema: errorResponseSchema,
-              },
-            },
-          },
-        },
-      },
-    },
-    '/api/users/{id}': {
-      get: {
-        tags: ['Users'],
-        summary: '단일 사용자 조회',
-        requestParams: {
-          path: userIdPathSchema,
-        },
         responses: {
           200: {
             description: '사용자 조회 성공',
@@ -283,103 +183,8 @@ export const openApiDocument = createDocument({
               },
             },
           },
-          404: {
-            description: '사용자 없음',
-            content: {
-              'application/json': {
-                schema: errorResponseSchema,
-              },
-            },
-          },
-        },
-      },
-      patch: {
-        tags: ['Users'],
-        summary: '사용자 수정',
-        security: [{ accessTokenCookie: [] }],
-        requestParams: {
-          path: userIdPathSchema,
-        },
-        requestBody: {
-          required: true,
-          content: {
-            'application/json': {
-              schema: updateUserSchema,
-            },
-          },
-        },
-        responses: {
-          200: {
-            description: '사용자 수정 성공',
-            content: {
-              'application/json': {
-                schema: userResponseSchema,
-              },
-            },
-          },
-          400: {
-            description: '입력값 검증 실패',
-            content: {
-              'application/json': {
-                schema: errorResponseSchema,
-              },
-            },
-          },
           401: {
             description: '로그인 필요',
-            content: {
-              'application/json': {
-                schema: errorResponseSchema,
-              },
-            },
-          },
-          403: {
-            description: '본인 정보만 수정 가능',
-            content: {
-              'application/json': {
-                schema: errorResponseSchema,
-              },
-            },
-          },
-          404: {
-            description: '사용자 없음',
-            content: {
-              'application/json': {
-                schema: errorResponseSchema,
-              },
-            },
-          },
-        },
-      },
-      delete: {
-        tags: ['Users'],
-        summary: '사용자 삭제',
-        security: [{ accessTokenCookie: [] }],
-        requestParams: {
-          path: userIdPathSchema,
-        },
-        responses: {
-          204: {
-            description: '사용자 삭제 성공',
-          },
-          401: {
-            description: '로그인 필요',
-            content: {
-              'application/json': {
-                schema: errorResponseSchema,
-              },
-            },
-          },
-          403: {
-            description: '본인 계정만 삭제 가능',
-            content: {
-              'application/json': {
-                schema: errorResponseSchema,
-              },
-            },
-          },
-          404: {
-            description: '사용자 없음',
             content: {
               'application/json': {
                 schema: errorResponseSchema,

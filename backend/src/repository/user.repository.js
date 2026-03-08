@@ -5,17 +5,6 @@ export class UserRepository {
     this.#prisma = prisma;
   }
 
-  findAll() {
-    return this.#prisma.user.findMany({
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        createdAt: true,
-      },
-    });
-  }
-
   findById(id) {
     return this.#prisma.user.findUnique({
       where: {
@@ -72,14 +61,6 @@ export class UserRepository {
     });
   }
 
-  delete(id) {
-    return this.#prisma.user.delete({
-      where: {
-        id: Number(id),
-      },
-    });
-  }
-
   findBySocialAccount(provider, providerId) {
     return this.#prisma.user.findFirst({
       where: {
@@ -114,7 +95,6 @@ export class UserRepository {
     });
   }
 
-  // TODO: SocialAccount 관련 기능이 늘어나면 SocialAccountRepository로 분리
   connectSocialAccount(userId, { provider, providerId }) {
     return this.#prisma.socialAccount.create({
       data: { provider, providerId, userId },

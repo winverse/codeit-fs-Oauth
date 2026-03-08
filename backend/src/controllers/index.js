@@ -2,24 +2,20 @@ import { format } from 'date-fns';
 import { BaseController } from './base.controller.js';
 
 export * from './auth/index.js';
-export * from './users/index.js';
 
 export class Controller extends BaseController {
   #authController;
   #socialAuthController;
-  #usersController;
 
-  constructor({ authController, socialAuthController, usersController }) {
+  constructor({ authController, socialAuthController }) {
     super();
     this.#authController = authController;
     this.#socialAuthController = socialAuthController;
-    this.#usersController = usersController;
   }
 
   routes() {
     this.router.use('/auth', this.#authController.routes());
     this.router.use('/auth', this.#socialAuthController.routes());
-    this.router.use('/users', this.#usersController.routes());
 
     this.router.get('/ping', (req, res) => this.ping(req, res));
 
