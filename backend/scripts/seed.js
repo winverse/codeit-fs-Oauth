@@ -29,8 +29,6 @@ class Seeder {
 
   async #resetDb() {
     return this.#prisma.$transaction([
-      this.#prisma.comment.deleteMany(),
-      this.#prisma.post.deleteMany(),
       this.#prisma.user.deleteMany(),
     ]);
   }
