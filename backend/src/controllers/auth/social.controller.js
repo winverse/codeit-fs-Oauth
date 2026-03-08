@@ -41,7 +41,6 @@ export class SocialAuthController extends BaseController {
     const { provider } = req.params;
     const { next } = req.query;
     const loginUrl = this.generateSocialLoginLink(provider, { next });
-
     res.redirect(loginUrl);
   }
 
@@ -63,10 +62,7 @@ export class SocialAuthController extends BaseController {
 
     const { next } = this.#decodeState(state);
     const safeNext = this.#normalizeNextPath(next);
-    const redirectUrl = new URL(
-      safeNext,
-      config.CLIENT_BASE_URL,
-    ).toString();
+    const redirectUrl = new URL(safeNext, config.CLIENT_BASE_URL).toString();
 
     return res.redirect(redirectUrl);
   }
