@@ -7,8 +7,12 @@ export default [
       ecmaVersion: 2024,
       sourceType: 'module',
       globals: {
+        Buffer: 'readonly',
         console: 'readonly',
+        fetch: 'readonly',
         process: 'readonly',
+        URL: 'readonly',
+        URLSearchParams: 'readonly',
       },
     },
     rules: {

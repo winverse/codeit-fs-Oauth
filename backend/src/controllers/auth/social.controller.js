@@ -63,7 +63,7 @@ export class SocialAuthController extends BaseController {
 
     const { next } = this.#decodeState(state);
     const safeNext = this.#normalizeNextPath(next);
-    const redirectUrl = new globalThis.URL(
+    const redirectUrl = new URL(
       safeNext,
       config.CLIENT_BASE_URL,
     ).toString();
@@ -72,8 +72,6 @@ export class SocialAuthController extends BaseController {
   }
 
   generateSocialLoginLink(provider, { next = '/' }) {
-    this.#assertProviderConfig(provider);
-
     const generator = this.socialLoginLinkGenerator[provider];
     if (!generator) {
       throw new BadRequestException(ERROR_MESSAGE.UNSUPPORTED_SOCIAL_PROVIDER);
@@ -86,7 +84,7 @@ export class SocialAuthController extends BaseController {
     return {
       google: ({ next }) => {
         const callback = `${this.#redirectUri}/google`;
-        const params = new globalThis.URLSearchParams({
+        const params = new URLSearchParams({
           client_id: config.GOOGLE_CLIENT_ID,
           redirect_uri: callback,
           response_type: 'code',
@@ -100,7 +98,7 @@ export class SocialAuthController extends BaseController {
       },
       kakao: ({ next }) => {
         const callback = `${this.#redirectUri}/kakao`;
-        const params = new globalThis.URLSearchParams({
+        const params = new URLSearchParams({
           client_id: config.KAKAO_CLIENT_ID,
           redirect_uri: callback,
           response_type: 'code',
@@ -111,7 +109,7 @@ export class SocialAuthController extends BaseController {
       },
       naver: ({ next }) => {
         const callback = `${this.#redirectUri}/naver`;
-        const params = new globalThis.URLSearchParams({
+        const params = new URLSearchParams({
           response_type: 'code',
           client_id: config.NAVER_CLIENT_ID,
           redirect_uri: callback,
@@ -128,7 +126,7 @@ export class SocialAuthController extends BaseController {
   }
 
   #encodeState(payload) {
-    return globalThis.Buffer.from(JSON.stringify(payload)).toString('base64url');
+    return Buffer.from(JSON.stringify(payload)).toString('base64url');
   }
 
   #decodeState(rawState) {
@@ -138,7 +136,7 @@ export class SocialAuthController extends BaseController {
 
     try {
       const parsed = JSON.parse(
-        globalThis.Buffer.from(rawState, 'base64url').toString('utf8'),
+        Buffer.from(rawState, 'base64url').toString('utf8'),
       );
 
       return { next: this.#normalizeNextPath(parsed?.next) };
@@ -162,25 +160,5 @@ export class SocialAuthController extends BaseController {
     }
 
     return trimmed;
-  }
-
-  #assertProviderConfig(provider) {
-    if (
-      provider === 'google' &&
-      (!config.GOOGLE_CLIENT_ID || !config.GOOGLE_CLIENT_SECRET)
-    ) {
-      throw new BadRequestException('Google OAuth 설정이 필요합니다.');
-    }
-
-    if (provider === 'kakao' && !config.KAKAO_CLIENT_ID) {
-      throw new BadRequestException('Kakao OAuth 설정이 필요합니다.');
-    }
-
-    if (
-      provider === 'naver' &&
-      (!config.NAVER_CLIENT_ID || !config.NAVER_CLIENT_SECRET)
-    ) {
-      throw new BadRequestException('Naver OAuth 설정이 필요합니다.');
-    }
   }
 }

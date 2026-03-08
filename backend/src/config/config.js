@@ -11,12 +11,12 @@ const envSchema = z.object({
   CORS_ORIGINS: z.string().optional().default(''),
   API_BASE_URL: z.string().optional().default(''),
   CLIENT_BASE_URL: z.string().optional().default('http://localhost:3000'),
-  GOOGLE_CLIENT_ID: z.string().optional().default(''),
-  GOOGLE_CLIENT_SECRET: z.string().optional().default(''),
-  KAKAO_CLIENT_ID: z.string().optional().default(''),
-  KAKAO_CLIENT_SECRET: z.string().optional().default(''),
-  NAVER_CLIENT_ID: z.string().optional().default(''),
-  NAVER_CLIENT_SECRET: z.string().optional().default(''),
+  GOOGLE_CLIENT_ID: z.string().trim().min(1),
+  GOOGLE_CLIENT_SECRET: z.string().trim().min(1),
+  KAKAO_CLIENT_ID: z.string().trim().min(1),
+  KAKAO_CLIENT_SECRET: z.string().trim().min(1),
+  NAVER_CLIENT_ID: z.string().trim().min(1),
+  NAVER_CLIENT_SECRET: z.string().trim().min(1),
 });
 
 const parseEnvironment = () => {

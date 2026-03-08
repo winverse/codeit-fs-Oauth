@@ -68,20 +68,16 @@ export class SocialAuthService {
   }
 
   async #getGoogleProfile(code) {
-    if (!config.GOOGLE_CLIENT_ID || !config.GOOGLE_CLIENT_SECRET) {
-      throw new BadRequestException('Google OAuth 설정이 필요합니다.');
-    }
-
     const callbackUri = `${config.API_BASE_URL}/api/auth/social/callback/google`;
 
-    const tokenResponse = await this.#requestJson(
+    const tokenResponse = await this.#requestSocialJson(
       'https://oauth2.googleapis.com/token',
       {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: new globalThis.URLSearchParams({
+        body: new URLSearchParams({
           code,
           client_id: config.GOOGLE_CLIENT_ID,
           client_secret: config.GOOGLE_CLIENT_SECRET,
@@ -92,7 +88,7 @@ export class SocialAuthService {
       'Google 토큰 요청에 실패했습니다.',
     );
 
-    const profileResponse = await this.#requestJson(
+    const profileResponse = await this.#requestSocialJson(
       'https://openidconnect.googleapis.com/v1/userinfo',
       {
         headers: {
@@ -110,43 +106,37 @@ export class SocialAuthService {
   }
 
   async #getKakaoProfile(code) {
-    if (!config.KAKAO_CLIENT_ID) {
-      throw new BadRequestException('Kakao OAuth 설정이 필요합니다.');
-    }
-
     const callbackUri = `${config.API_BASE_URL}/api/auth/social/callback/kakao`;
 
-    const tokenParams = new globalThis.URLSearchParams({
+    const tokenParams = new URLSearchParams({
       grant_type: 'authorization_code',
       client_id: config.KAKAO_CLIENT_ID,
+      client_secret: config.KAKAO_CLIENT_SECRET,
       redirect_uri: callbackUri,
       code,
     });
 
-    if (config.KAKAO_CLIENT_SECRET) {
-      tokenParams.set('client_secret', config.KAKAO_CLIENT_SECRET);
-    }
-
-    const tokenResponse = await this.#requestJson(
+    const tokenResponse = await this.#requestSocialJson(
       'https://kauth.kakao.com/oauth/token',
       {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
         },
         body: tokenParams,
       },
       'Kakao 토큰 요청에 실패했습니다.',
     );
 
-    console.log('tokenResponse', tokenResponse);
-
-    const profileResponse = await this.#requestJson(
+    const profileResponse = await this.#requestSocialJson(
       'https://kapi.kakao.com/v2/user/me',
       {
+        method: 'POST',
         headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
           Authorization: `Bearer ${tokenResponse.access_token}`,
         },
+        body: new URLSearchParams(),
       },
       'Kakao 프로필 조회에 실패했습니다.',
     );
@@ -164,13 +154,9 @@ export class SocialAuthService {
   }
 
   async #getNaverProfile(code, state) {
-    if (!config.NAVER_CLIENT_ID || !config.NAVER_CLIENT_SECRET) {
-      throw new BadRequestException('Naver OAuth 설정이 필요합니다.');
-    }
-
     const callbackUri = `${config.API_BASE_URL}/api/auth/social/callback/naver`;
 
-    const tokenQuery = new globalThis.URLSearchParams({
+    const tokenQuery = new URLSearchParams({
       grant_type: 'authorization_code',
       client_id: config.NAVER_CLIENT_ID,
       client_secret: config.NAVER_CLIENT_SECRET,
@@ -179,7 +165,7 @@ export class SocialAuthService {
       redirect_uri: callbackUri,
     });
 
-    const tokenResponse = await this.#requestJson(
+    const tokenResponse = await this.#requestSocialJson(
       `https://nid.naver.com/oauth2.0/token?${tokenQuery.toString()}`,
       {
         method: 'GET',
@@ -187,7 +173,7 @@ export class SocialAuthService {
       'Naver 토큰 요청에 실패했습니다.',
     );
 
-    const profilePayload = await this.#requestJson(
+    const profilePayload = await this.#requestSocialJson(
       'https://openapi.naver.com/v1/nid/me',
       {
         headers: {
@@ -219,15 +205,28 @@ export class SocialAuthService {
     return `${provider}_${safeSocialId}@social.local`;
   }
 
-  async #requestJson(url, options, defaultErrorMessage) {
-    const response = await globalThis.fetch(url, options);
-    const payload = await response.json().catch(() => null);
+  async #requestSocialJson(url, options, defaultErrorMessage) {
+    const response = await fetch(url, options);
+    const rawText = await response.text();
+    let payload = null;
+
+    if (rawText) {
+      try {
+        payload = JSON.parse(rawText);
+      } catch {
+        payload = null;
+      }
+    }
 
     if (!response.ok) {
       const message =
         payload?.error_description ??
         payload?.error ??
         payload?.message ??
+        payload?.msg ??
+        payload?.extras?.detailMsg ??
+        rawText ??
+        response.statusText ??
         defaultErrorMessage;
 
       throw new UnauthorizedException(
